@@ -1,0 +1,27 @@
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+aptPkgs = [
+  "chromium",
+  "fonts-liberation",
+  "libnss3",
+  "libatk-bridge2.0-0",
+  "libatk1.0-0",
+  "libcups2",
+  "libdrm2",
+  "libgbm1",
+  "libxcomposite1",
+  "libxdamage1",
+  "libxfixes3",
+  "libxrandr2",
+  "xdg-utils",
+]
+
+[phases.install]
+cmds = ["npm install"]
+
+[start]
+cmd = "npm start"
+
+[variables]
+PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
+PUPPETEER_EXECUTABLE_PATH = "/usr/bin/chromium"
