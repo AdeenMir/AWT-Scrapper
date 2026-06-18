@@ -33,6 +33,21 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/schedules", authenticate, scheduleRoutes);
 app.use("/api/payments", paymentRoutes);
 
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "WebScraper API is running",
+    docs: "Use /api/auth, /api/reports, /api/scraper, etc.",
+  });
+});
+
+app.get("/api", (req, res) => {
+  res.json({
+    status: "ok",
+    endpoints: ["/api/auth", "/api/reports", "/api/scraper", "/api/schedules", "/api/payments", "/api/user"],
+  });
+});
+
 mongoose
   .connect(process.env.MONGO_URI, {
     tls: true,
