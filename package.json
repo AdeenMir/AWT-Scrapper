@@ -1,0 +1,8 @@
+{
+  "name": "web-scrapper",
+  "private": true,
+  "scripts": {
+    "build": "cd client && npm install --legacy-peer-deps && npm run build && node server/scripts/copy-public.js",
+    "start": "cd server && npm start"
+  }
+}

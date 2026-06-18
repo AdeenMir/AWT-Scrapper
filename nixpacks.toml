@@ -17,16 +17,19 @@ aptPkgs = [
 ]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = [
+  "cd server && npm install",
+  "cd client && npm install --legacy-peer-deps",
+]
 
 [phases.build]
 cmds = [
-  "cd ../client && npm install --legacy-peer-deps && npm run build",
-  "rm -rf public && mkdir -p public && cp -r ../client/dist/. public/",
+  "cd client && npm run build",
+  "rm -rf server/public && mkdir -p server/public && cp -r client/dist/. server/public/",
 ]
 
 [start]
-cmd = "npm start"
+cmd = "cd server && npm start"
 
 [variables]
 PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
