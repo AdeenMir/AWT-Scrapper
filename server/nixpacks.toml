@@ -17,7 +17,13 @@ aptPkgs = [
 ]
 
 [phases.install]
-cmds = ["npm install", "npm run build"]
+cmds = ["npm install"]
+
+[phases.build]
+cmds = [
+  "cd ../client && npm install --legacy-peer-deps && npm run build",
+  "rm -rf public && mkdir -p public && cp -r ../client/dist/. public/",
+]
 
 [start]
 cmd = "npm start"

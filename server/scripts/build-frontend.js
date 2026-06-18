@@ -7,8 +7,8 @@ const publicDir = path.join(__dirname, "../public");
 const distDir = path.join(clientDir, "dist");
 
 console.log("Building frontend...");
-execSync("npm install --legacy-peer-deps", { cwd: clientDir, stdio: "inherit" });
-execSync("npm run build", { cwd: clientDir, stdio: "inherit" });
+execSync("npm install --legacy-peer-deps", { cwd: clientDir, stdio: "inherit", shell: true });
+execSync("npm run build", { cwd: clientDir, stdio: "inherit", shell: true });
 
 if (!fs.existsSync(distDir)) {
   throw new Error("Client build failed: dist/ folder not found");
