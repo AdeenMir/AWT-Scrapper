@@ -17,7 +17,7 @@ aptPkgs = [
 ]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = ["npm install", "npm run build"]
 
 [start]
 cmd = "npm start"
