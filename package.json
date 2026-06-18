@@ -3,6 +3,6 @@
   "private": true,
   "scripts": {
     "start": "cd server && npm start",
-    "build:local": "cd client && npm install --legacy-peer-deps && npm run build && node server/scripts/copy-public.js"
+    "build:local": "cd client && npm install --legacy-peer-deps && npm run build && cd .. && node server/scripts/copy-public.js"
   }
 }

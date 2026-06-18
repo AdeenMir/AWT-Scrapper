@@ -5,7 +5,7 @@ node_modules/
 *.log
 dist/
 build/
-server/public/
+client/dist/
 .vscode/
 .idea/
 

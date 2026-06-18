@@ -30,7 +30,8 @@ COPY client ./client
 
 RUN cd client && npm run build \
   && mkdir -p server/public \
-  && cp -r dist/. server/public/
+  && cp -r dist/. server/public/ \
+  && test -f server/public/index.html
 
 WORKDIR /app/server
 
