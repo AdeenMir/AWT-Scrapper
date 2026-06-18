@@ -1,1 +1,387 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --color-background: #faf8f5;
+    --color-surface: #f5f1ed;
+    --color-surface-hover: #ede8e1;
+    --color-border: #d4c4b4;
+    --color-primary: #c9956d;
+    --color-primary-hover: #d4a574;
+    --color-primary-active: #b8876a;
+    --color-accent: #d4a574;
+    --color-text-primary: #3e3b37;
+    --color-text-secondary: #6b6863;
+    --color-shadow: 0 24px 60px rgba(62, 59, 55, 0.12);
+    --color-primary-rgb: 201, 149, 113;
+    --color-accent-rgb: 212, 165, 116;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --color-background: #1a1815;
+    --color-surface: #2a2825;
+    --color-surface-hover: #333028;
+    --color-border: #3d3a35;
+    --color-primary: #d4a574;
+    --color-primary-hover: #e8c9a8;
+    --color-primary-active: #c9956d;
+    --color-accent: #e8c9a8;
+    --color-text-primary: #f0ede8;
+    --color-text-secondary: #b8b3ad;
+    --color-shadow: 0 24px 65px rgba(0, 0, 0, 0.28);
+    --color-primary-rgb: 212, 169, 138;
+    --color-accent-rgb: 232, 201, 168;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-background);
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  /* Base transition setup with bouncy easing */
+  button,
+  input,
+  textarea,
+  select,
+  a {
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, box-shadow, background-color, color, filter;
+  }
+
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.25);
+  }
+}
+
+@layer utilities {
+  /* ========== PRIMARY ACTION BUTTONS ========== */
+  .btn-primary-magical {
+    @apply flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium text-white;
+    background-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.2);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-primary-magical:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(var(--color-primary-rgb), 0.35),
+                0 0 20px rgba(var(--color-primary-rgb), 0.2);
+    filter: brightness(1.05);
+  }
+
+  .btn-primary-magical:active:not(:disabled) {
+    background-color: var(--color-primary-active);
+    transform: translateY(0px);
+    box-shadow: 0 6px 15px rgba(var(--color-primary-rgb), 0.25);
+  }
+
+  .btn-primary-magical:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Icon inside primary button */
+  .btn-primary-magical svg {
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-primary-magical:hover:not(:disabled) svg {
+    transform: rotate(6deg) scale(1.1);
+  }
+
+  /* ========== SECONDARY BUTTONS ========== */
+  .btn-secondary-magical {
+    @apply flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium border-2;
+    background-color: transparent;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-secondary-magical:hover:not(:disabled) {
+    background-color: rgba(var(--color-primary-rgb), 0.12);
+    border-color: var(--color-primary-hover);
+    color: var(--color-primary-hover);
+    transform: scale(1.07) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(var(--color-primary-rgb), 0.25),
+                0 0 15px rgba(var(--color-primary-rgb), 0.15);
+  }
+
+  .btn-secondary-magical:active:not(:disabled) {
+    background-color: rgba(var(--color-primary-rgb), 0.18);
+    transform: scale(1.03) translateY(0px);
+    box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.15);
+  }
+
+  .btn-secondary-magical:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Icon inside secondary button */
+  .btn-secondary-magical svg {
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-secondary-magical:hover:not(:disabled) svg {
+    transform: rotate(6deg) scale(1.08);
+  }
+
+  /* ========== CARD & SURFACE PANELS ========== */
+  .surface-panel {
+    @apply border rounded-lg p-4;
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .card-magical {
+    @apply rounded-lg border;
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .card-fancy {
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Hover effects for cards - subtle lift and color shift */
+  .card-fancy:hover {
+    background-color: var(--color-surface-hover);
+    transform: scale(1.02) translateY(-4px);
+    border-color: var(--color-primary);
+    box-shadow: 0 12px 28px rgba(var(--color-primary-rgb), 0.18),
+                0 0 15px rgba(var(--color-primary-rgb), 0.12);
+  }
+
+  .card-fancy:hover .text-accent,
+  .card-fancy:hover .text-primary {
+    color: var(--color-primary);
+    transition: color 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Icon animations inside cards */
+  .card-fancy:hover svg {
+    transform: rotate(6deg) scale(1.08);
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ========== ICON BUTTONS ========== */
+  .icon-btn-magical {
+    @apply rounded-full p-2 transition-all duration-300 flex items-center justify-center;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-btn-magical:hover:not(:disabled) {
+    background-color: rgba(var(--color-primary-rgb), 0.2);
+    transform: scale(1.12) rotate(8deg);
+    box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.28),
+                0 0 12px rgba(var(--color-primary-rgb), 0.15);
+    filter: brightness(1.1);
+  }
+
+  .icon-btn-magical:active:not(:disabled) {
+    transform: scale(1.05) rotate(6deg);
+  }
+
+  .icon-btn-magical:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ========== FORM INPUTS ========== */
+  .input-magical {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text-primary);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .input-magical::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  input.input-magical:focus,
+  textarea.input-magical:focus,
+  select.input-magical:focus {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(var(--color-primary-rgb), 0.25),
+                inset 0 0 8px rgba(var(--color-primary-rgb), 0.08);
+    outline: none;
+  }
+
+  input.input-magical,
+  textarea.input-magical,
+  select.input-magical {
+    @apply rounded-lg px-4 py-2 border-2;
+  }
+
+  /* ========== TEXT LINKS ========== */
+  .link-magical {
+    position: relative;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-block;
+  }
+
+  .link-magical::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .link-magical:hover {
+    color: var(--color-primary-hover);
+    transform: scale(1.05);
+    letter-spacing: 0.3px;
+  }
+
+  .link-magical:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* ========== FORM GROUPS & SECTIONS ========== */
+  .form-group {
+    @apply space-y-2;
+  }
+
+  .form-label {
+    @apply block text-sm font-semibold;
+    color: var(--color-text-primary);
+  }
+
+  /* ========== ALERT / NOTIFICATION PANELS ========== */
+  .alert-panel {
+    background-color: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: #dc2626;
+    @apply rounded-lg p-4 text-sm font-medium mb-6;
+    animation: fadeInAlert 0.4s ease-out;
+  }
+
+  @keyframes fadeInAlert {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Dark mode alert */
+  .dark .alert-panel {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+  }
+
+  /* ========== NAVBAR STYLES ========== */
+  nav {
+    background-color: var(--color-surface) !important;
+    border-bottom-color: var(--color-border) !important;
+  }
+
+  nav a,
+  nav button {
+    color: var(--color-text-primary);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* ========== ANIMATIONS ========== */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  /* ========== UTILITY HELPERS ========== */
+  .group:hover .group-hover\:scale-110 {
+    transform: scale(1.1);
+  }
+
+  .group:hover .group-hover\:rotate-3 {
+    transform: rotate(3deg);
+  }
+
+  .group:hover .group-hover\:-translate-y-1 {
+    transform: translateY(-4px);
+  }
+
+  /* Ensure text colors adapt to dark mode */
+  .dark .text-primary {
+    color: var(--color-primary);
+  }
+
+  .dark .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .dark .text-accent {
+    color: var(--color-accent);
+  }
+
+  /* Light mode text color overrides */
+  .light .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+}
+
+/* Global interactive element styling */
+@layer components {
+  /* Ensure all interactive elements have smooth transitions */
+  @apply transition-all duration-300;
+}

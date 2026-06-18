@@ -6,6 +6,8 @@ const reportSchema = new mongoose.Schema({
   format: { type: String, required: true },
   rawData: { type: mongoose.Schema.Types.Mixed },
   cleanedData: { type: mongoose.Schema.Types.Mixed },
+  // Feature 6: scrape diff
+  diffData: { type: mongoose.Schema.Types.Mixed, default: null },
   createdAt: { type: Date, default: Date.now }
 });
 

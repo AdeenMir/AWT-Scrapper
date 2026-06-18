@@ -1,65 +1,93 @@
+// jobs/scheduler.js — Runs active schedules automatically using node-cron
 const Schedule = require('../models/Schedule');
 const Scraper = require('../models/Scraper');
+const Report = require('../models/Report');
 const { scrape } = require('../services/scraper.service');
 const { clean } = require('../services/cleaner.service');
-const Report = require('../models/Report');
-
-const activeJobs = {};
 
 module.exports = (cron) => {
-  // Run every minute to check for active schedules
+  // Check every minute which schedules are due
   cron.schedule('* * * * *', async () => {
     try {
+      const now = new Date();
       const schedules = await Schedule.find({ status: 'active' }).populate('scraperId');
 
       for (const schedule of schedules) {
-        const jobKey = schedule._id.toString();
+        // Skip if nextRun is in the future
+        if (schedule.nextRun && schedule.nextRun > now) continue;
 
-        // Skip if already registered
-        if (activeJobs[jobKey]) continue;
+        const scraper = schedule.scraperId;
+        if (!scraper) continue;
 
-        // Register the cron job
-        const job = cron.schedule(schedule.interval, async () => {
-          try {
-            const scraper = await Scraper.findById(schedule.scraperId);
-            if (!scraper) return;
+        console.log(`[Scheduler] Running scrape for: ${scraper.label}`);
 
-            const rawData = await scrape(scraper.url, scraper.selector);
-            const cleanedData = clean(rawData);
+        try {
+          const rawData = await scrape(scraper.url, {
+            selector: scraper.selector,
+            nameSelector: scraper.nameSelector,
+            priceSelector: scraper.priceSelector,
+            selectors: scraper.selectors || [],
+            enablePagination: scraper.enablePagination,
+            maxPages: scraper.maxPages
+          });
 
-            await Report.create({
-              scraperId: scraper._id,
-              url: scraper.url,
-              format: scraper.format,
-              rawData,
-              cleanedData
-            });
+          const cleanedData = clean(rawData);
 
-            // Update lastRun
-            schedule.lastRun = new Date();
-            await schedule.save();
-
-            console.log(`Scheduled scrape done for: ${scraper.url}`);
-          } catch (err) {
-            console.error(`Scheduled scrape failed: ${err.message}`);
+          // Scrape diff
+          let diffData = null;
+          const lastReport = await Report.findOne({ scraperId: scraper._id }).sort({ createdAt: -1 });
+          if (lastReport && lastReport.cleanedData) {
+            const prevTexts = new Set(lastReport.cleanedData.map(i => i.text));
+            const currTexts = new Set(cleanedData.map(i => i.text));
+            const added = cleanedData.filter(i => !prevTexts.has(i.text));
+            const removed = lastReport.cleanedData.filter(i => !currTexts.has(i.text));
+            diffData = { added, removed, addedCount: added.length, removedCount: removed.length };
           }
-        });
 
-        activeJobs[jobKey] = job;
-      }
+          await Report.create({
+            scraperId: scraper._id,
+            url: scraper.url,
+            format: scraper.format,
+            rawData,
+            cleanedData,
+            diffData
+          });
 
-      // Stop jobs that have been paused or deleted
-      for (const jobKey of Object.keys(activeJobs)) {
-        const schedule = await Schedule.findById(jobKey);
-        if (!schedule || schedule.status === 'paused') {
-          activeJobs[jobKey].stop();
-          delete activeJobs[jobKey];
+          // Update schedule timestamps
+          schedule.lastRun = now;
+          schedule.nextRun = getNextRun(schedule.interval);
+          await schedule.save();
+
+          console.log(`[Scheduler] Done: ${scraper.label} — ${cleanedData.length} items`);
+        } catch (err) {
+          console.error(`[Scheduler] Failed: ${scraper.label} —`, err.message);
         }
       }
     } catch (err) {
-      console.error('Scheduler error:', err.message);
+      console.error('[Scheduler] Error:', err.message);
     }
   });
 
-  console.log('Scheduler initialized');
+  console.log('[Scheduler] Running — checks every minute');
+};
+
+// Calculate when the schedule should next run based on cron expression
+const getNextRun = (cronExpression) => {
+  try {
+    const parts = cronExpression.split(' ');
+    const now = new Date();
+    // Simple estimation based on common intervals
+    const intervals = {
+      '* * * * *':     1,
+      '0 * * * *':     60,
+      '0 */6 * * *':   360,
+      '0 */12 * * *':  720,
+      '0 0 * * *':     1440,
+      '0 0 * * 0':     10080
+    };
+    const minutesToAdd = intervals[cronExpression] || 60;
+    return new Date(now.getTime() + minutesToAdd * 60 * 1000);
+  } catch {
+    return new Date(Date.now() + 60 * 60 * 1000); // default 1 hour
+  }
 };
